@@ -1,0 +1,12 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<suite name="TestSuite" parallel="none">
+    <test name="AllTests">
+        <classes>
+            <class name="org.example.tests.W3SchoolsTests"/>
+            <class name="org.example.tests.GitHubTests"/>
+            <class name="org.example.tests.WikipediaTests"/>
+            <!-- Add Reporter so @AfterSuite runs -->
+            <class name="org.example.framework.report.Reporter"/>
+        </classes>
+    </test>
+</suite>
