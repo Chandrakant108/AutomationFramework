@@ -1,12 +1,39 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
-<suite name="TestSuite" parallel="none">
-    <test name="AllTests">
+<suite name="AutomationFrameworkSuite" parallel="tests" thread-count="4">
+
+    <!-- GitHub Selenium Tests -->
+    <test name="GitHubTests">
         <classes>
-            <class name="org.example.tests.W3SchoolsTests"/>
-            <class name="org.example.tests.GitHubTests"/>
-            <class name="org.example.tests.WikipediaTests"/>
-            <!-- Add Reporter so @AfterSuite runs -->
-            <class name="org.example.framework.report.Reporter"/>
+            <class name="org.example.framework.schtests.GitHubTests"/>
         </classes>
     </test>
+
+    <!-- GitHub API Tests -->
+    <test name="GitHubApiTests">
+        <classes>
+            <class name="org.example.framework.schtests.GitHubApiTests"/>
+        </classes>
+    </test>
+
+    <!-- W3Schools Selenium Tests -->
+    <test name="W3SchoolsTests">
+        <classes>
+            <class name="org.example.framework.schtests.W3SchoolsTests"/>
+        </classes>
+    </test>
+
+    <!-- Wikipedia Selenium Tests -->
+    <test name="WikipediaTests">
+        <classes>
+            <class name="org.example.framework.schtests.WikipediaTests"/>
+        </classes>
+    </test>
+
+    <!-- TestScheduler (optional) -->
+    <test name="TestScheduler">
+        <classes>
+            <class name="org.example.framework.scheduler.TestScheduler"/>
+        </classes>
+    </test>
+
 </suite>

@@ -1,138 +1,159 @@
-# Automation Framework
+# AutomationFramework
 
-This project is a Java-based automation framework using **Selenium**, **TestNG**, and **REST Assured** for testing web applications and APIs. It also includes a **CSV reporting mechanism** to log test results.
+## Overview
+**AutomationFramework** is a Java-based automated testing framework that runs multiple test suites in parallel and exports the results to both Excel and a database. The framework is designed to execute web tests across multiple platforms like GitHub, Wikipedia, W3Schools, and GitHub APIs, leveraging Selenium WebDriver for browser automation.
 
----
-
-## Table of Contents
-
-- [Features](#features)
-- [Technologies](#technologies)
-- [Project Structure](#project-structure)
-- [Setup](#setup)
-- [Running Tests](#running-tests)
-- [CSV Reporting](#csv-reporting)
-- [Notes](#notes)
-- [Contributing](#contributing)
-- [License](#license)
+It also supports scheduled execution, allowing tests to run automatically at specified times daily.
 
 ---
 
 ## Features
 
-- Automated **UI tests** using Selenium WebDriver.
-- Automated **API tests** using REST Assured.
-- Generates a **CSV report** for all test results.
-- Supports **multiple browsers** for UI tests (Chrome, Firefox, Edge, etc.).
-- Maintains historical results in the CSV file without overwriting previous data.
-
----
-
-## Technologies
-
-- **Java 23**
-- **TestNG 7.10.2**
-- **Selenium 4.35.0**
-- **REST Assured 5.5.0**
-- **Apache Commons CSV 1.10.0**
-- **OpenCSV 5.9**
-- **SLF4J 1.7.36**
-- **Maven** for dependency management
+- Parallel execution of multiple test suites.
+- Test results exported to Excel files and a database.
+- Scheduled execution using a configurable time.
+- Uses Selenium WebDriver for browser automation.
+- Supports multiple browsers (Chrome, Firefox, Edge, etc.).
+- Modular design for easy addition of new test suites.
+- Logs detailed execution time for each test.
 
 ---
 
 ## Project Structure
 
 
-
 AutomationFramework/
-│
-├─ src/main/java/org/example/framework/report/
-│ ├─ CSVExporter.java # Handles CSV export
-│ ├─ Reporter.java # Generates CSV after test suite
-│ └─ TestSuiteReporter.java # TestNG listener for CSV generation
-│
-├─ src/test/java/org/example/tests/
-│ ├─ GitHubApiTests.java # Sample API test
-│ └─ OtherUITests.java # Sample UI tests
-│
-├─ pom.xml # Maven configuration
-└─ testng.xml # TestNG suite configuration
-
+├── src/main/java/org/example/framework/schtests
+│ ├── GitHubTests.java
+│ ├── GitHubApiTests.java
+│ ├── W3SchoolsTests.java
+│ └── WikipediaTests.java
+├── src/main/java/org/example/framework/scheduler
+│ └── TestScheduler.java
+├── src/main/java/org/example/framework/report
+│ └── ExcelAndDbExporter.java
+├── pom.xml
+└── README.md
 
 
 ---
 
-## Setup
+## Prerequisites
 
-1. **Clone the repository:**
-   ```bash
-   git clone <your-repo-url>
+- Java JDK 23 or higher
+- Maven 3.8 or higher
+- Chrome/Firefox/Edge WebDriver installed (or managed via WebDriverManager)
+- MySQL or any supported database for result storage (optional if only exporting to Excel)
 
-2. Open the project in IntelliJ IDEA or Eclipse.
+---
 
-3. Ensure Maven is installed and all dependencies are resolved.
+## Installation
 
-4. Install browser drivers if running UI tests (ChromeDriver, GeckoDriver, etc.).
+1. Clone the repository:
 
-5. Update test data if needed.
-
-
-Running Tests
-Using Maven:
-mvn clean test
-
-Using TestNG Suite:
-
-Right-click on testng.xml → Run as → TestNG Suite.
-
-Test Reports:
-
-A CSV report is automatically generated after the test suite runs.
-
-Historical test results are appended, so previous test data is preserved.
+```bash
+git clone https://github.com/yourusername/AutomationFramework.git
+cd AutomationFramework
 
 
-CSV Reporting
+2. Build the project using Maven:
 
-File: test-results.csv
-
-Columns:
-
-Timestamp, Test Name, URL/Endpoint, Status, Execution Time (s), Date
+mvn clean install
 
 
-Example:
+Configure database connection (if using DB export) in ExcelAndDbExporter.java.
 
-1756988821472, GitHub API Test, api.github.com, Passed, 0.735, 2025-09-04T17:57:01.475151400
-
-
-CSVExporter.java handles adding results during the test and appending them at the end.
-
-Notes
-
-Ensure you don’t run both Reporter.java and TestSuiteReporter.java at the same time, as it may duplicate CSV entries.
-
-API tests use REST Assured for status code validation.
-
-UI tests use Selenium WebDriver for browser automation.
+Ensure browser drivers are available or use WebDriverManager to automatically manage them.
 
 
-Contributing
+Running the Tests
+1. Manual Execution
 
-1. Fork the project.
+Run the scheduler manually from the command line or IDE:
 
-2. Create a branch: git checkout -b feature-name
+java -cp target/classes;path_to_dependencies org.example.framework.scheduler.TestScheduler
 
-3. Commit your changes: git commit -m "Add new feature"
 
-4. Push to the branch: git push origin feature-name
+This will:
 
-5. Submit a pull request.
+Schedule the tests for the configured time (default: 21:06).
+
+Execute tests in parallel.
+
+Export results to Excel and database.
+
+Log test execution times.
+
+2. Scheduled Execution
+
+The TestScheduler class computes initial delay and schedules tasks daily at the specified time.
+
+You can configure the schedule by changing:
+
+LocalTime targetTime = LocalTime.of(21, 6);
+
+
+Test Reporting
+
+1. Excel Reports
+
+Each test suite exports results to an Excel file with the format: TestName | Status | Duration | Timestamp.
+
+Excel Reports
+
+Each test suite exports results in Excel format:
+
+Test Name	Status	Duration	Timestamp
+GitHubTests	Passed	0.512s	2025-09-07 21:06
+GitHubApiTests	Passed	0.808s	2025-09-07 21:06
+WikipediaTests	Passed	0.714s	2025-09-07 21:06
+W3SchoolsTests	Passed	0.606s	2025-09-07 21:06
+
+2. Database Reports
+
+Test results are inserted into a database table if configured.
+
+
+Adding New Test Suites
+
+1. Create a new class in schtests package implementing a runAllTests() method.
+
+2. Add the test in TestScheduler:
+
+parallelExecutor.submit(() -> runAndExport(new YourNewTest()::runAllTests));
+
+
+Dependencies
+
+Selenium Java 4.35.0
+
+WebDriverManager 5.3.2
+
+TestNG 7.10.2
+
+Apache POI 5.2.3 (Excel handling)
+
+Jackson Databind 2.18.2
+
+MySQL Connector/J 8.0.33
+
+SLF4J 2.0.6 (Logging)
+
+Apache Commons Libraries (Collections, CSV, Exec, Lang3, etc.)
+
+Troubleshooting
+
+Chrome tab not opening: Ensure correct ChromeDriver version and WebDriverManager setup.
+
+Database connection error: Check JDBC URL, username, password, and DB server availability.
+
+TestScheduler static errors: Make sure to use instance method references (new Class()::runAllTests) for non-static test methods.
 
 
 License
 
-This project is licensed under the MIT License.
+MIT License © 2025 [Chandrakant Kumar]
 
----
+Contact
+
+For questions or support, contact: [chandrakant2522006@gmail.com]
