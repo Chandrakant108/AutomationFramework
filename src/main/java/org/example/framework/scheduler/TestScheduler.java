@@ -39,7 +39,7 @@ public class TestScheduler {
             }
         };
 
-        LocalTime targetTime = LocalTime.of(21, 53); // schedule time
+        LocalTime targetTime = LocalTime.of(9, 21); // schedule time
         long initialDelay = computeInitialDelay(targetTime);
         long period = TimeUnit.DAYS.toSeconds(1);
 
